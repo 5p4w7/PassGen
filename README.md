@@ -32,7 +32,7 @@ The purpose of this program is to generate passwords that are easy to use and av
 
 ```text
 Enter the desired password length: 12
-Generated password: A7mQx2pL9kT
+Generated password: A7mQx2pL9kT4
 ```
 
 ## Notes
