@@ -1,4 +1,4 @@
-import random
+import secrets
 import string
 
 def generate_password(length):
@@ -9,14 +9,14 @@ def generate_password(length):
         raise ValueError("Password length must be positive")
 
     # Start with a letter, then continue with safe characters
-    first_char = random.choice(string.ascii_letters)
+    first_char = secrets.choice(string.ascii_letters)
     allowed_chars = string.ascii_letters + string.digits
     allowed_chars += "".join(
         ch for ch in string.punctuation if ch not in "$,'\" "
     )
 
     password_chars = [first_char]
-    password_chars.extend(random.choice(allowed_chars) for _ in range(length - 1))
+    password_chars.extend(secrets.choice(allowed_chars) for _ in range(length - 1))
 
     return "".join(password_chars)
 
