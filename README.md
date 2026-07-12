@@ -25,7 +25,7 @@ The purpose of this program is to generate passwords that are easy to use and av
    python new-password.py
    ```
 
-4. Enter the desired password length when prompted.
+4. Then Enter the desired password length when prompted.
 5. The program will display a generated password.
 
 ## Example
