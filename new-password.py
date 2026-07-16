@@ -1,93 +1,64 @@
-"""Small secure password generator.
-
-Preserves original behavior: password starts with a letter and excludes
-$, comma, single- and double-quote characters.
-"""
-import argparse
+﻿import argparse
 import secrets
 import string
 from typing import Sequence
 
 # Characters to exclude from the password
 FORBIDDEN_CHARS: frozenset[str] = frozenset({"$", ",", "'", '"'})
-
-# Minimum sensible password length
 MIN_LENGTH = 8
 
-# Build the allowed character pool once at import time
-_ALLOWED_CHARS: str = ''.join(
-    ch for ch in (string.ascii_letters + string.digits + string.punctuation)
-    if ch not in FORBIDDEN_CHARS
-)
-
+# Build pools for guaranteed inclusion
+_LETTERS = string.ascii_letters
+_DIGITS = string.digits
+_PUNCTUATION = ''.join(ch for ch in string.punctuation if ch not in FORBIDDEN_CHARS)
+_ALL_POOL = _LETTERS + _DIGITS + _PUNCTUATION
 
 def _positive_int(value: str) -> int:
-    """argparse type: parse a positive integer >= MIN_LENGTH, else raise ArgumentTypeError."""
+    """argparse type: parse a positive integer >= MIN_LENGTH."""
     try:
         ivalue = int(value)
     except ValueError:
         raise argparse.ArgumentTypeError(f"{value!r} is not a valid integer")
     if ivalue < MIN_LENGTH:
-        raise argparse.ArgumentTypeError(
-            f"Password length must be at least {MIN_LENGTH}, got {ivalue}"
-        )
+        raise argparse.ArgumentTypeError(f"Length must be at least {MIN_LENGTH}")
     return ivalue
 
-
 def generate_password(length: int) -> str:
-    """Generate a cryptographically secure random password.
+    """Generate a secure password with guaranteed diversity."""
+    if length < MIN_LENGTH:
+        raise ValueError(f"Length must be >= {MIN_LENGTH}")
 
-    The first character is always an ASCII letter. Remaining characters are
-    chosen from the allowed set (letters, digits, punctuation minus forbidden).
+    # Start with mandatory diversity: 1 letter, 1 digit, 1 punctuation
+    password = [
+        secrets.choice(_LETTERS),
+        secrets.choice(_DIGITS),
+        secrets.choice(_PUNCTUATION),
+    ]
 
-    Args:
-        length: Total password length; must be >= MIN_LENGTH.
+    # Fill the rest of the password
+    password += [secrets.choice(_ALL_POOL) for _ in range(length - 3)]
 
-    Raises:
-        ValueError: if length is less than MIN_LENGTH.
-    """
-    if not isinstance(length, int) or length < MIN_LENGTH:
-        raise ValueError(f"length must be an integer >= {MIN_LENGTH}, got {length!r}")
-
-    if not _ALLOWED_CHARS:
-        raise RuntimeError("No allowed characters available to build password")
-
-    first_char = secrets.choice(string.ascii_letters)
-    rest = [secrets.choice(_ALLOWED_CHARS) for _ in range(length - 1)]
-    return first_char + ''.join(rest)
-
+    # Shuffle to ensure the forced characters aren't always at the start
+    secrets.SystemRandom().shuffle(password)
+    
+    return ''.join(password)
 
 def _prompt_for_length() -> int:
-    """Interactively prompt the user for a valid password length."""
     while True:
         try:
-            raw = input(f"Enter the desired password length (min {MIN_LENGTH}): ")
-            value = int(raw)
-            if value < MIN_LENGTH:
-                print(f"Please enter a number >= {MIN_LENGTH}.")
-                continue
-            return value
+            return int(input(f"Enter password length (min {MIN_LENGTH}): "))
         except ValueError:
-            print("Invalid input. Please enter a valid integer.")
+            print("Invalid integer.")
         except KeyboardInterrupt:
-            print("\nCancelled.")
-            raise SystemExit(0)
-
+            raise SystemExit("\nCancelled.")
 
 def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Generate a secure password.")
-    parser.add_argument(
-        '-l', '--length',
-        type=_positive_int,
-        metavar='N',
-        help=f'Password length (minimum {MIN_LENGTH})',
-    )
+    parser.add_argument('-l', '--length', type=_positive_int, help='Password length')
     args = parser.parse_args(argv)
 
-    length = args.length if args.length is not None else _prompt_for_length()
-    password = generate_password(length)
-    print(f"Generated password: {password}")
-
+    length = args.length or _prompt_for_length()
+    print(f"Generated password: {generate_password(length)}")
 
 if __name__ == '__main__':
     main()
