@@ -1,27 +1,41 @@
-# Secure Password Generator
+#! /usr/bin/env python3
+""" Secure Password Generator """
 
-This script generates secure random passwords using Python's secrets module.
+import argparse
+import secrets
+import string
 
-## Features
-- Generates cryptographically strong random passwords
-- Customizable password length
-- Excludes ambiguous characters
+# Password Generation Constants
+PASSWORD_LENGTH = 16
+POOL = string.ascii_letters + string.digits + string.punctuation
+POOL = ''.join(c for c in POOL if c not in '$,"\'')
 
-## Requirements
-- Python 3.6+
+def main():
+    """ Secure Password Generator """
 
-## Usage
+    parser = argparse.ArgumentParser(
+        description="Generates cryptographically strong random passwords",
+        epilog="""Note: Passwords may contain ambiguous characters such as
+        $, ,, ', and ". If you prefer passwords that do not contain these characters, try the -p flag."""
+    )
 
-`ash
-python password_generator.py [--length LENGTH]
-`
+    parser.add_argument(
+        "-l", "--length",
+        action="store",
+        type=int,
+        metavar="LENGTH",
+        default=PASSWORD_LENGTH,
+        help="Specify password length (default: %(default)s)"
+    )
 
-## Example
+    args = parser.parse_args()
 
-`ash
-python password_generator.py --length 12
-`
+    if args.length < 8:
+        raise ValueError("Password length must be at least 8 characters")
 
-## License
+    password = ''.join(secrets.choice(POOL) for i in range(args.length))
+    print(password)
 
-MIT
+if __name__ == "__main__":
+    main()
+
