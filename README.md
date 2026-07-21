@@ -46,3 +46,5 @@ License
 
 MIT-style — feel free to adapt for your needs.
 
+-END-
+
