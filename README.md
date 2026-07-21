@@ -37,4 +37,3 @@ python new-password.py -l 12 -p
 
 MIT-style — feel free to adapt for your needs.
 
--END-
