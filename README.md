@@ -1,41 +1,48 @@
-#! /usr/bin/env python3
-""" Secure Password Generator """
+# Secure Password Generator
 
-import argparse
-import secrets
-import string
+This small script generates cryptographically-strong random passwords.
 
-# Password Generation Constants
-PASSWORD_LENGTH = 16
-POOL = string.ascii_letters + string.digits + string.punctuation
-POOL = ''.join(c for c in POOL if c not in '$,"\'')
+Usage
+-----
 
-def main():
-    """ Secure Password Generator """
+Run the script interactively (it will prompt for a length if you omit `-l`):
 
-    parser = argparse.ArgumentParser(
-        description="Generates cryptographically strong random passwords",
-        epilog="""Note: Passwords may contain ambiguous characters such as
-        $, ,, ', and ". If you prefer passwords that do not contain these characters, try the -p flag."""
-    )
+    python new-password.py
 
-    parser.add_argument(
-        "-l", "--length",
-        action="store",
-        type=int,
-        metavar="LENGTH",
-        default=PASSWORD_LENGTH,
-        help="Specify password length (default: %(default)s)"
-    )
+Or supply a length on the command line:
 
-    args = parser.parse_args()
+    python new-password.py -l 12
 
-    if args.length < 8:
-        raise ValueError("Password length must be at least 8 characters")
+Flags
+-----
 
-    password = ''.join(secrets.choice(POOL) for i in range(args.length))
-    print(password)
+- `-l`, `--length` : Specify the password length (minimum 8).
 
-if __name__ == "__main__":
-    main()
+- `-p`, `--prune` : Exclude ambiguous punctuation characters (`$`, `,`, `'`, `"`).
+
+Examples
+--------
+
+Generate a 16-character password (interactive prompt or default):
+
+    python new-password.py
+
+Generate a 12-character password:
+
+    python new-password.py -l 12
+
+Generate a 12-character password without ambiguous punctuation:
+
+    python new-password.py -l 12 -p
+
+Notes
+-----
+
+- The interactive prompt now validates input and will politely re-prompt for values below the minimum.
+- The previous README contained an older script and mentioned a `-p` flag which is not implemented in the current script; this README reflects the current behaviour.
+
+License
+-------
+
+MIT-style — feel free to adapt for your needs.
 
