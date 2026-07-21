@@ -1,49 +1,38 @@
-# Secure Password Generator
+# PassGen
 
-This small script generates cryptographically-strong random passwords.
+A simple Python password generator that creates strong, varied passwords with optional exclusion of ambiguous characters.
 
-Usage
------
+## Features
 
-Run the script interactively (it will prompt for a length if you omit `-l`):
+- Generates secure passwords using Python's `secrets` module
+- Enforces at least one letter, one digit, and one punctuation character
+- Supports optional exclusion of ambiguous punctuation such as `$`, `,`, `'`, and `"`
+- Includes a small command-line interface for easy use
 
-    python new-password.py
+## Usage
+
+Run the script interactively:
+
+```bash
+python new-password.py
+```
 
 Or supply a length on the command line:
 
-    python new-password.py -l 12
+```bash
+python new-password.py -l 12
+```
 
-Flags
------
+Optional flag:
 
-- `-l`, `--length` : Specify the password length (minimum 8).
+```bash
+python new-password.py -l 12 -p
+```
 
-- `-p`, `--prune` : Exclude ambiguous punctuation characters (`$`, `,`, `'`, `"`).
+## Requirements
 
-Examples
---------
+- Python 3.9+
 
-Generate a 16-character password (interactive prompt or default):
-
-    python new-password.py
-
-Generate a 12-character password:
-
-    python new-password.py -l 12
-
-Generate a 12-character password without ambiguous punctuation:
-
-    python new-password.py -l 12 -p
-
-Notes
------
-
-- The interactive prompt now validates input and will politely re-prompt for values below the minimum.
-- The previous README contained an older script and mentioned a `-p` flag which is not implemented in the current script; this README reflects the current behaviour.
-
-License
--------
+## License
 
 MIT-style — feel free to adapt for your needs.
-
-t
