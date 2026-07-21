@@ -36,3 +36,5 @@ python new-password.py -l 12 -p
 ## License
 
 MIT-style — feel free to adapt for your needs.
+
+-END-
